@@ -1,0 +1,28 @@
+{
+    "name": "fenghuilee/phalbee-core",
+    "description": "Core Phalbee",
+    "keywords": ["phalbee", "phalcon", "framework", "mvc"],
+    "homepage": "https://github.com/fenghuilee/phalbee-core",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fenghui Lee",
+            "email": "fenghuilee@gmail.com",
+            "homepage": "https://www.fenghuilee.com/",
+            "role": "Founder and Project Lead"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/fenghuilee/phalbee-core/issues?state=open",
+        "source": "https://github.com/fenghuilee/phalbee-core"
+    },
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Phalbee\\": "src/"
+        }
+    }
+}
