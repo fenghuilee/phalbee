@@ -75,32 +75,20 @@
         "source": {
             "type": "git",
             "url": "https://github.com/fenghuilee/phalbee-core.git",
-            "reference": "420f59522edd88d705fb158f52828a851129bff9",
-            "mirrors": [
-                {
-                    "url": "/%package%/%normalizedUrl%.%type%",
-                    "preferred": true
-                }
-            ]
+            "reference": "e8eab875325a1b792d7fe4a6fe3752515eb6aeaa"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fenghuilee/phalbee-core/zipball/420f59522edd88d705fb158f52828a851129bff9",
-            "reference": "420f59522edd88d705fb158f52828a851129bff9",
-            "shasum": "",
-            "mirrors": [
-                {
-                    "url": "https://toran.reimu.io/repo/packagist/dists/%package%/%version%/%reference%.%type%",
-                    "preferred": true
-                }
-            ]
+            "url": "https://api.github.com/repos/fenghuilee/phalbee-core/zipball/e8eab875325a1b792d7fe4a6fe3752515eb6aeaa",
+            "reference": "e8eab875325a1b792d7fe4a6fe3752515eb6aeaa",
+            "shasum": ""
         },
         "require": {
             "php": ">=5.4.0"
         },
-        "time": "2015-07-30 08:42:26",
+        "time": "2015-07-31 00:51:15",
         "type": "library",
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "psr-4": {
                 "Phalbee\\": "src/"
@@ -118,7 +106,7 @@
                 "role": "Founder and Project Lead"
             }
         ],
-        "description": "Core Phalbee",
+        "description": "Phalbee Core Framework",
         "homepage": "https://github.com/fenghuilee/phalbee-core",
         "keywords": [
             "framework",
