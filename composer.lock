@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "604ecc5d35580128d87aa1425e5ee629",
+    "hash": "6a1315a82519f8521b392c63eef59aab",
     "packages": [
         {
             "name": "fenghuilee/phalbee-core",
@@ -12,19 +12,34 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fenghuilee/phalbee-core.git",
-                "reference": "e8eab875325a1b792d7fe4a6fe3752515eb6aeaa"
+                "reference": "72253a114c5594c8d16ea8905d0a8c760c94a0f1",
+                "mirrors": [
+                    {
+                        "url": "/%package%/%normalizedUrl%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fenghuilee/phalbee-core/zipball/e8eab875325a1b792d7fe4a6fe3752515eb6aeaa",
-                "reference": "e8eab875325a1b792d7fe4a6fe3752515eb6aeaa",
-                "shasum": ""
+                "url": "https://api.github.com/repos/fenghuilee/phalbee-core/zipball/72253a114c5594c8d16ea8905d0a8c760c94a0f1",
+                "reference": "72253a114c5594c8d16ea8905d0a8c760c94a0f1",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://toran.reimu.io/repo/packagist/dists/%package%/%version%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "php": ">=5.4.0"
             },
             "type": "library",
             "autoload": {
+                "files": [
+                    "src/Support/helpers.php"
+                ],
                 "psr-4": {
                     "Phalbee\\": "src/"
                 }
@@ -49,7 +64,7 @@
                 "phalbee",
                 "phalcon"
             ],
-            "time": "2015-07-31 00:51:15"
+            "time": "2015-07-31 01:38:01"
         },
         {
             "name": "smarty/smarty",
