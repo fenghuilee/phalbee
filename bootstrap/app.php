@@ -3,15 +3,18 @@
 use Phalcon\DI;
 use Phalcon\Loader;
 use Phalcon\Config;
-use Phalcon\Mvc\View;
-use Phalcon\Mvc\Router;
-use Phalcon\Mvc\Dispatcher;
+use Phalcon\Dispatcher;
 use Phalcon\Http\Response;
 use Phalcon\Http\Request;
+use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Db\Adapter\Pdo\Mysql as Database;
-use Phalcon\Mvc\Model\Manager as ModelsManager;
+use Phalcon\Mvc\View as MvcView;
+use Phalcon\Mvc\Router as MvcRouter;
 use Phalcon\Mvc\Application as MvcApplication;
-use Phalcon\Mvc\Model\Metadata\Memory as MemoryMetaData;
+use Phalcon\Mvc\Dispatcher as MvcDispatcher;
+use Phalcon\Mvc\Dispatcher\Exception as MvcDispatchException;
+use Phalcon\Mvc\Model\Manager as MvcModelsManager;
+use Phalcon\Mvc\Model\Metadata\Memory as MvcModelMetadataMemory;
 
 class Application extends MvcApplication
 {
@@ -20,11 +23,10 @@ class Application extends MvcApplication
     {
         $loader = new Loader();
         
-        $loader->registerNamespaces([
-            /*'App'                  => ROOT_DIR . '/app/',
-            'App\Controller'       => ROOT_DIR . '/app/controllers/',
-            'App\Model'            => ROOT_DIR . '/app/models/',
-            'App\View'             => ROOT_DIR . '/app/views/',*/
+        $loader->registerDirs([
+            ROOT_DIR . '/app/Controllers/',
+            ROOT_DIR . '/app/Models/',
+            ROOT_DIR . '/app/Views/',
         ]);
         
         $loader->register();
@@ -39,21 +41,38 @@ class Application extends MvcApplication
 
         //Registering a router
         $di->set('router', function(){
-            $router = new Router();
+            $router = new MvcRouter();
+            $router->setUriSource(MvcRouter::URI_SOURCE_SERVER_REQUEST_URI);
             foreach ((include ROOT_DIR . "/app/Configs/router.php") as $key=>$value) {
                 $router->add($key, $value);
-            }
-            $router->notFound([
-                'controller'=>'error',
-                'action'=>'error404',
-            ]);
+            };
             return $router;
         });
 
         //Registering a dispatcher
         $di->set('dispatcher', function(){
-            $dispatcher = new Dispatcher();
+            //Create an EventsManager
+            $eventsManager = new EventsManager();
+            //Attach a listener
+            $eventsManager->attach("dispatch", function($event, $dispatcher, $exception) {
+                //Handle controller or action doesn't exist
+                if ($event->getType() == 'beforeException') {
+                    switch ($exception->getCode()) {
+                        case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
+                        case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
+                            $dispatcher->forward([
+                                'controller' => 'error',
+                                'action'     => 'index',
+                                'params'     => ['message' => $exception->getMessage()],
+                            ]);
+                            return false;
+                    }
+                }
+            });
+
+            $dispatcher = new MvcDispatcher();
             $dispatcher->setDefaultNamespace('App\Controllers\\');
+            $dispatcher->setEventsManager($eventsManager);
             return $dispatcher;
         });
 
@@ -68,25 +87,26 @@ class Application extends MvcApplication
         });
 
         //Registering the view component
-        /*$di->set('view', function(){
-            $view = new View();
+        $di->set('view', function(){
+            $view = new MvcView();
             $view->setViewsDir(ROOT_DIR . '/app/Views/');
             return $view;
-        });*/
-        $di->set('view', function(){
-            $view = new View();
+        });
+
+        /*$di->set('view', function(){
+            $view = new MvcView();
             $view->setViewsDir(ROOT_DIR . '/app/Views/');
             $view->registerEngines([
                 '.html' => function($view, $di) {
                     $smarty = new \Phalbee\Base\View\Engine\Smarty($view, $di);
                     $smarty->setOptions([
+                        'left_delimiter' => '<{',
+                        'right_delimiter' => '}>',
                         'template_dir'      => ROOT_DIR . '/app/Views',
                         'compile_dir'       => ROOT_DIR . '/runtime/Smarty/compile',
                         'cache_dir'         => ROOT_DIR . '/runtime/Smarty/cache',
                         'error_reporting'   => error_reporting() ^ E_NOTICE,
                         'escape_html'       => true,
-                        '_file_perms'       => 0666,
-                        '_dir_perms'        => 0777,
                         'force_compile'     => false,
                         'compile_check'     => true,
                         'caching'           => false,
@@ -96,21 +116,42 @@ class Application extends MvcApplication
                 },
             ]);
             return $view;
+        });*/
+
+        $di->set('smarty', function(){
+            $smarty = new \Smarty();
+            $options = [
+                'left_delimiter' => '<{',
+                'right_delimiter' => '}>',
+                'template_dir'      => ROOT_DIR . '/app/Views',
+                'compile_dir'       => ROOT_DIR . '/runtime/Smarty/compile',
+                'cache_dir'         => ROOT_DIR . '/runtime/Smarty/cache',
+                'error_reporting'   => error_reporting() ^ E_NOTICE,
+                'escape_html'       => true,
+                'force_compile'     => false,
+                'compile_check'     => true,
+                'caching'           => false,
+                'debugging'         => true,
+            ];
+            foreach ($options as $k => $v) {
+                $smarty->$k = $v;
+            };
+            return $smarty;
         });
 
         $di->set('db', function(){
-            $db = include(ROOT_DIR . "/app/configs/db.php");
+            $db = include(ROOT_DIR . "/app/Configs/db.php");
             return new Database($db);
         });
 
         //Registering the Models-Metadata
         $di->set('modelsMetadata', function(){
-            return new MemoryMetaData();
+            return new MvcModelMetadataMemory();
         });
 
         //Registering the Models Manager
         $di->set('modelsManager', function(){
-            return new ModelsManager();
+            return new MvcModelsManager();
         });
 
         $this->setDI($di);

@@ -7,8 +7,11 @@ use Phalbee\Base\Controller;
 class ErrorController extends Controller
 {
 
-    public function error404Action()
+    public function indexAction()
     {
-        echo "404 Not Page Found!";
+        //var_export($this->response->getContent());
+        //echo (new \Phalcon\Debug\Dump())->variables($this->response);
+        $this->smarty->assign(['Status' => $this->response->getStatusCode()]);
+        $this->smarty->display('error.html');
     }
 }
