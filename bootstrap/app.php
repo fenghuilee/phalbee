@@ -43,7 +43,7 @@ class Application extends MvcApplication
         $di->set('router', function(){
             $router = new MvcRouter();
             $router->setUriSource(MvcRouter::URI_SOURCE_SERVER_REQUEST_URI);
-            foreach ((include ROOT_DIR . "/app/Configs/router.php") as $key=>$value) {
+            foreach ((include ROOT_DIR . "/config/router.php") as $key=>$value) {
                 $router->add($key, $value);
             };
             return $router;
@@ -140,7 +140,7 @@ class Application extends MvcApplication
         });
 
         $di->set('db', function(){
-            $db = include(ROOT_DIR . "/app/Configs/db.php");
+            $db = include(ROOT_DIR . "/config/db.php");
             return new Database($db);
         });
 
